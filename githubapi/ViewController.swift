@@ -15,7 +15,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet weak var searchTF: UITextField!
     @IBOutlet weak var starSortBtn: UIButton!
     @IBOutlet weak var forkSortBtn: UIButton!
-    @IBOutlet weak var descSort: UIImageView!
     
     var curentPage = 1
     let cna = ConnectAPI()
@@ -36,8 +35,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         starSortBtn.addTarget(self, action: #selector(srarSort), for: .touchUpInside)
         forkSortBtn.addTarget(self, action: #selector(forkSort), for: .touchUpInside)
-        starSortBtn.setTitleColor(.black, for: .normal)
-        forkSortBtn.setTitleColor(.black, for: .normal)
     }
     
     @objc func srarSort() {
@@ -50,19 +47,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         else {
             desc = true
             mode = 2
-            starSortBtn.setTitleColor(.blue, for: .normal)
-            forkSortBtn.setTitleColor(.black, for: .normal)
         }
         let searchKey = searchTF.text!
         if desc {
             order = "desc"
-            descSort.image = UIImage(named: "down")
         } else {
             order = "asc"
-            descSort.image = UIImage(named: "upload")
         }
         cna.sortRepo(page: 1, searchKey: searchKey, typeSort: "stars", order: order, repoTableView: self.reposTableView)
-        //cna.sortRepo(page: 1, searchKey: searchKey, typeSort: "stars", order: order, repoTableView: self.reposTableView)
+        cna.sortRepo(page: 1, searchKey: searchKey, typeSort: "stars", order: order, repoTableView: self.reposTableView)
     }
     
     @objc func forkSort() {
@@ -75,17 +68,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         else {
             desc = true
             mode = 3
-            forkSortBtn.setTitleColor(.blue, for: .normal)
-            starSortBtn.setTitleColor(.black, for: .normal)
         }
         let searchKey = searchTF.text!
         if desc {
             order = "desc"
-            descSort.image = UIImage(named: "down")
         } else {
             order = "asc"
-            descSort.image = UIImage(named: "upload")
         }
+        cna.sortRepo(page: 1, searchKey: searchKey, typeSort: "forks", order: order, repoTableView: self.reposTableView)
         cna.sortRepo(page: 1, searchKey: searchKey, typeSort: "forks", order: order, repoTableView: self.reposTableView)
     }
     
@@ -96,13 +86,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         curentPage = 1
         if mode == 0 {
             cna.getListRepo(page: 1, repoTableView: self.reposTableView)
+            cna.getListRepo(page: 1, repoTableView: self.reposTableView)
         } else if mode == 1{
+            cna.searchKey(page: 1, searchKey: searchKey, repoTableView: reposTableView)
             cna.searchKey(page: 1, searchKey: searchKey, repoTableView: reposTableView)
         } else if mode == 2 {
             
             cna.sortRepo(page: 1, searchKey: searchKey, typeSort: "stars", order: order, repoTableView: self.reposTableView)
+            cna.sortRepo(page: 1, searchKey: searchKey, typeSort: "stars", order: order, repoTableView: self.reposTableView)
         } else if mode == 3 {
             
+            cna.sortRepo(page: 1, searchKey: searchKey, typeSort: "forks", order: order, repoTableView: self.reposTableView)
             cna.sortRepo(page: 1, searchKey: searchKey, typeSort: "forks", order: order, repoTableView: self.reposTableView)
         }
         debugPrint("current page   = \(curentPage) and mode = \(mode)")
@@ -111,19 +105,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     @objc func search() {
         let searchKey = searchTF.text!
-        descSort.image = nil
-        starSortBtn.setTitleColor(.black, for: .normal)
-        forkSortBtn.setTitleColor(.black, for: .normal)
+        debugPrint(searchKey)
         curentPage = 1
-        starSortBtn.setTitleColor(.black, for: .normal)
-        forkSortBtn.setTitleColor(.black, for: .normal)
         if !searchKey.isEmpty{
             mode = 1
+            cna.searchKey(page: curentPage, searchKey: searchTF.text!, repoTableView: reposTableView)
             cna.searchKey(page: curentPage, searchKey: searchTF.text!, repoTableView: reposTableView)
         } else {
             mode = 0
             Contains.arrRepo.removeAll()
             self.reposTableView.reloadData()
+            cna.getListRepo(page: curentPage, repoTableView: self.reposTableView)
             cna.getListRepo(page: curentPage, repoTableView: self.reposTableView)
         }
     }
@@ -134,12 +126,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         curentPage += 1
         if mode == 0 {
             cna.getListRepo(page: curentPage, repoTableView: self.reposTableView)
+            cna.searchKey(page: curentPage, searchKey: searchTF.text!, repoTableView: reposTableView)
         }
         else if mode == 1 {
             cna.searchKey(page: curentPage, searchKey: searchTF.text!, repoTableView: reposTableView)
+            cna.searchKey(page: curentPage, searchKey: searchTF.text!, repoTableView: reposTableView)
         } else if mode == 2 {
             cna.sortRepo(page: curentPage, searchKey: searchTF.text!, typeSort: "stars", order: order, repoTableView: reposTableView)
+            cna.sortRepo(page: curentPage, searchKey: searchTF.text!, typeSort: "stars", order: order, repoTableView: reposTableView)
         } else if mode == 3 {
+            cna.sortRepo(page: curentPage, searchKey: searchTF.text!, typeSort: "forks", order: order, repoTableView: reposTableView)
             cna.sortRepo(page: curentPage, searchKey: searchTF.text!, typeSort: "forks", order: order, repoTableView: reposTableView)
         }
     }
